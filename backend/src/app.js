@@ -9,5 +9,7 @@ app.use(express.json())
 app.use(authMidddleware)
 app.use(rateLimiter)
 app.use("/api",testRoutes)
-
+app.use((req, res) => {
+  res.status(404).send("Route not found");
+});
 export default app

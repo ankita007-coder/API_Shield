@@ -34,7 +34,7 @@ export default async function resolveRule(req) {
         rule = await RateRule.findOne({
             target:"user",
             scope:"global",
-            identifier:endpoint,
+            identifier:"*",
             active: true
         })
     }
@@ -43,7 +43,7 @@ export default async function resolveRule(req) {
         rule = await RateRule.findOne({
             target:"ip",
             scope:"global",
-            identifier:endpoint,
+            identifier:"*",
             active: true
         })
     }
@@ -61,7 +61,7 @@ export default async function resolveRule(req) {
         rule = await RateRule.findOne({
         target:"ip",
         scope:"global",
-        identifier:endpoint,
+        identifier:"*",
         active: true
         })
     }
