@@ -10,12 +10,13 @@ router.get("/ping",(req,res)=>{
 
 router.get("/rate-rule",async(req,res)=>{
     const rule = await RateRule.create({
-        type:"ip",
-        identifier:"/api/ping",
-        limit:3,
-        timeWindow:30,
-        algorithm:"sliding_window"
-    })
+  "target": "ip",
+  "scope": "global",
+  "identifier": "*",
+  "limit": 10,
+  "timeWindow": 60,
+  "algorithm":"sliding_window"
+})
     res.json(rule)
 })
 export default router

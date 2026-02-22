@@ -1,10 +1,15 @@
 import mongoose from "mongoose";
 
 const rateRuleSchema = new mongoose.Schema({
-    type:{
+    target:{
         type:String,
         required: true,
-        enum: ["ip","user", "endpoint"]
+        enum: ["ip","user"]
+    },
+    scope:{
+        type:String,
+        required:true,
+        enum:["global","endpoint"]
     },
     identifier:{
         type:String,

@@ -1,19 +1,23 @@
 import redisClient from "../config/redis.js";
 import resolveRule from "../services/ruleResolver.js";
 
+const rateLimiter = async (req, res, next) => {
+  try {
+    const rule = await resolveRule(req);
+    if (!rule) {
+      return next();
+    }
+    const limit = rule.limit;
+    const timeWindow = rule.timeWindow * 1000;
+    let key;
 
-const rateLimiter = async(req,res,next)=>{
-    try {
-        const rule = await resolveRule(req)
-        if(!rule){
-            return next()
-        }
-        const {ip} = req
-        const limit = rule.limit;
-        const timeWindow = rule.timeWindow *1000
-        const key = `rate:${rule.identifier}:${ip}`
-        const now = Date.now()
-        const luaScript=`local key = KEYS[1]
+    if (rule.target === "user" && req.user?.id) {
+      key = `rate:${rule.identifier}:user:${req.user.id}`;
+    } else {
+      key = `rate:${rule.identifier}:ip:${req.ip}`;
+    }
+    const now = Date.now();
+    const luaScript = `local key = KEYS[1]
                     local limit = tonumber(ARGV[1])
                     local timeWindow = tonumber(ARGV[2])
                     local now = tonumber(ARGV[3])
@@ -26,19 +30,26 @@ const rateLimiter = async(req,res,next)=>{
                         return 0
                     else
                         return 1
-                    end`
-        const count = await redisClient.eval(luaScript,1,key,limit,timeWindow,now)
-        if(count===0){
-            return res.status(429).json({
-                message:"Too many requests. Please try again later."
-            })
-        }
-        next()
-    } catch (error) {
-        console.error("Rate limit error",error);
-        next()       
+                    end`;
+    const count = await redisClient.eval(
+      luaScript,
+      1,
+      key,
+      limit,
+      timeWindow,
+      now,
+    );
+    if (count === 0) {
+      return res.status(429).json({
+        message: "Too many requests. Please try again later.",
+      });
     }
-}
+    next();
+  } catch (error) {
+    console.error("Rate limit error", error);
+    next();
+  }
+};
 
 // ===== Fixed Window Implementation (Initial Version) =====
 // Used INCR + EXPIRE
@@ -66,4 +77,4 @@ const rateLimiter = async(req,res,next)=>{
 //     }
 // }
 
-export default rateLimiter
+export default rateLimiter;
