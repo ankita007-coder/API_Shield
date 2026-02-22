@@ -11,10 +11,10 @@ router.get("/ping",(req,res)=>{
 router.get("/rate-rule",async(req,res)=>{
     const rule = await RateRule.create({
         type:"ip",
-        identifier:"/ping",
-        limit:5,
-        timeWindow:60,
-        algorithm:"fixed_window"
+        identifier:"/api/ping",
+        limit:3,
+        timeWindow:30,
+        algorithm:"sliding_window"
     })
     res.json(rule)
 })
