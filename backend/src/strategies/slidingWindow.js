@@ -1,3 +1,4 @@
+//we use sorted sets here
 const slidingWindow = async ({key,limit,timeWindow,redisClient}) => {
   const now = Date.now();
   const luaScript = `local key = KEYS[1]

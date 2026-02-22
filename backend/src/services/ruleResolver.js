@@ -66,7 +66,6 @@ export default async function resolveRule(req) {
         })
     }
   }
-
   if(rule){
     setRuleInCache(cachedKey,rule)
   }
