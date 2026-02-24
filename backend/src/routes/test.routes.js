@@ -13,7 +13,7 @@ router.get("/checkToken", (req, res) => {
 
 router.get("/rate-rule", async (req, res) => {
   const rule = await RateRule.create({
-    target: "user",
+    target: "ip",
     scope: "endpoint",
     identifier: "/api/checkForSliding",
     limit: 2,
