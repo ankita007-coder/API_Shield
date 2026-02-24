@@ -42,3 +42,10 @@ services:
     depends_on:
       - redis
       - mongo
+  dashboard:
+    build:
+      context: ./admin
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend1
