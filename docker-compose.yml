@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+
+  backend1:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - JWT_SECRET_KEY=secretkeymine
+      - MONGODB_URI=mongodb://mongo:27017/apiShield
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PORT=3000
+    depends_on:
+      - redis
+      - mongo
+
+  backend2:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - JWT_SECRET_KEY=secretkeymine
+      - MONGODB_URI=mongodb://mongo:27017/apiShield
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PORT=3000
+    depends_on:
+      - redis
+      - mongo
+  dashboard:
+    build:
+      context: ./admin
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend1

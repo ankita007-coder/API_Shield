@@ -1,10 +1,8 @@
 import app from "./app.js"
 import connectDB from "./config/mongo.js"
 import "./config/redis.js"
-import dotenv from "dotenv"
 
-dotenv.config()
-const PORT = 3000
+const PORT = 3000|| process.env.PORT
 
 await connectDB();
 
